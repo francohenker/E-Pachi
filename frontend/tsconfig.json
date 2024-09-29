@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",            // Indica que las rutas relativas son desde la raíz
+    "paths": {
+      "@/*": ["src/*"]         // Alias '@' para la carpeta 'src'
+    },
+    "jsx": "react-jsx",        // Configura JSX para React (si es necesario)
+    "target": "ES2021",        // Configuración opcional del target de JavaScript
+    "module": "ESNext",        // Usa ESNext para módulos
+    "moduleResolution": "Node",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "strict": true
+  },
+  "include": ["src/**/*"]       // Incluye todos los archivos dentro de 'src'
+}
