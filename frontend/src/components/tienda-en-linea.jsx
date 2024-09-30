@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Star, Heart, Home, Grid, User, Settings, Plus } from 'lucide-react';
 // En tienda-en-linea.jsx
-import { Button } from "../ui/button"; // Ajusta la ruta según la estructura de tus carpetas
-import { Input } from "../ui/input"; // Ajusta la ruta según la estructura de tus carpetas
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog"; // Ajusta la ruta
-import { Label } from "../ui/label"; // Ajusta la ruta
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
+import { Label } from "./ui/label";
 
 
 
-export function TiendaEnLineaJsx() {
+export default function TiendaEnLineaJsx() {
   const [productos, setProductos] = useState([]);
   const [nuevoProducto, setNuevoProducto] = useState({
     nombre: '',

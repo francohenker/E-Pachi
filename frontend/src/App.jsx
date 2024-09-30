@@ -1,7 +1,5 @@
 import './App.css';
-import TiendaEnLineaJsx, { ECommerceUiJsx } from './components/tienda-en-linea'; // Importación nombrada
-import TiendaEnLineaJsx from './components/tienda-en-linea';
-
+import TiendaEnLineaJsx from './components/tienda-en-linea'; // Importación por defecto
 
 function App() {
   return (
