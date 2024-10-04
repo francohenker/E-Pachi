@@ -25,7 +25,9 @@ import { Producto } from './producto.entity';
 
 @Controller('productos')
 export class ProductoController {
-  constructor(private readonly productoService: ProductoService) {}
+  constructor(
+    private readonly productoService: ProductoService
+  ) {}
 
   // ruta para obtener todos los productos
   @Get()
