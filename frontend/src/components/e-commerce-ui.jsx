@@ -8,17 +8,15 @@ import { Input } from "./ui/input";
 export default function TiendaEnLinea() {
   const [productos, setProductos] = useState([]);
 
-  // Función para cargar productos
+  // función para cargar productos
   const cargarProductos = async () => {
-    // Aquí deberías hacer una llamada a tu API o base de datos
-    // Por ahora, simularemos una carga con un retraso
+    // aca se tiene que hacer una llamada a la base de datos pero como no tenemos se hace una simulacion nomas
     await new Promise(resolve => setTimeout(resolve, 1000));
 
-    // Ejemplo de cómo podrías cargar los productos
+    
     const nuevosProductos = [
       { id: 1, nombre: "Producto 1", precio: 1000, calificacion: 4.5, imagen: "URL_DE_LA_IMAGEN_1" },
       { id: 2, nombre: "Producto 2", precio: 2000, calificacion: 4.2, imagen: "URL_DE_LA_IMAGEN_2" },
-      // Agrega más productos aquí
     ];
 
     setProductos(nuevosProductos);
@@ -65,9 +63,9 @@ export default function TiendaEnLinea() {
         </div>
       </aside>
 
-      {/* Contenido Principal */}
+      {/* contenido Principal */}
       <main className="flex-1">
-        {/* Encabezado */}
+        {/* encabezado */}
         <header className="bg-white shadow-md p-4">
           <div className="flex items-center justify-between">
             <div className="relative flex-1 max-w-xl">
@@ -85,7 +83,7 @@ export default function TiendaEnLinea() {
           </div>
         </header>
 
-        {/* Cuadrícula de Productos */}
+        {/* cuadrícula de Productos */}
         <div className="p-8">
           <h2 className="text-2xl font-semibold mb-6 text-navy-900">Productos Destacados</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
