@@ -20,6 +20,12 @@ export class Producto{
     @Column({type: 'date'})
     fecha_creacion: Date
 
+    @Column({ default: 0 })
+    stockThreshold: number; // umbral definido por el vendedor
+  
+    @Column({ default: true })
+    disponible: boolean; // indica si está disponible o no
+
     constructor(){
         
     }

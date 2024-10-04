@@ -2,13 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Star, Heart, Home, Grid, User, Settings, Plus } from 'lucide-react';
-// En tienda-en-linea.jsx
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
-
-
 
 export default function TiendaEnLineaJsx() {
   const [productos, setProductos] = useState([]);
@@ -20,10 +17,9 @@ export default function TiendaEnLineaJsx() {
   });
 
   const cargarProductos = async () => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
     const productosIniciales = [
-      { id: 1, nombre: "Auriculares Inalámbricos", precio: 1199.99, calificacion: 4.5, imagen: "https://example.com/auriculares.jpg" },
-      { id: 2, nombre: "Reloj Inteligente", precio: 2499.99, calificacion: 4.2, imagen: "https://example.com/reloj.jpg" },
+      { id: 1, nombre: "Auriculares Inalámbricos", precio: 1199.99, calificacion: 4.5, imagen: "https://example.com/auriculares.jpg", stock: 10 },
+      { id: 2, nombre: "Reloj Inteligente", precio: 2499.99, calificacion: 4.2, imagen: "https://example.com/reloj.jpg", stock: 5 },
     ];
     setProductos(productosIniciales);
   };
@@ -49,9 +45,56 @@ export default function TiendaEnLineaJsx() {
     setNuevoProducto({ nombre: '', precio: '', imagen: '', calificacion: 0 });
   };
 
+  // función para ajustar el stock del producto 
+  const ajustarStock = async (id, cantidadVendida) => {
+    try {
+      const response = await fetch(`/api/productos/${id}/ajustar-stock`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cantidad: cantidadVendida }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al ajustar el stock');
+      }
+      
+      const productoActualizado = await response.json();
+      setProductos((prevProductos) => 
+        prevProductos.map((producto) => 
+          producto.id === id ? productoActualizado : producto
+        )
+      );
+    } catch (error) {
+      console.error('Error ajustando el stock:', error);
+    }
+  };
+
+  // función para marcar el producto como fuera de stock
+  const marcarFueraDeStock = async (id) => {
+    try {
+      const response = await fetch(`/api/productos/${id}/fuera-de-stock`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al marcar fuera de stock');
+      }
+
+      const productoActualizado = await response.json();
+      setProductos((prevProductos) =>
+        prevProductos.map((producto) =>
+          producto.id === id ? productoActualizado : producto
+        )
+      );
+    } catch (error) {
+      console.error('Error marcando fuera de stock:', error);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <aside className="w-64 bg-navy-900 text-white">
+        {/* Sidebar */}
         <div className="p-4">
           <h1 className="text-2xl font-bold mb-8">TiendaAzul</h1>
           <nav>
@@ -86,6 +129,7 @@ export default function TiendaEnLineaJsx() {
       </aside>
 
       <main className="flex-1">
+        {/* Barra de búsqueda */}
         <header className="bg-white shadow-md p-4">
           <div className="flex items-center justify-between">
             <div className="relative flex-1 max-w-xl">
@@ -132,6 +176,7 @@ export default function TiendaEnLineaJsx() {
                   <div>
                     <Label htmlFor="imagen">URL de la Imagen</Label>
                     <Input
+
                       id="imagen"
                       name="imagen"
                       value={nuevoProducto.imagen}
@@ -150,6 +195,7 @@ export default function TiendaEnLineaJsx() {
           </div>
         </header>
 
+        {/* Sección de productos */}
         <div className="p-8">
           <h2 className="text-2xl font-semibold mb-6 text-navy-900">Productos Destacados</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -165,7 +211,15 @@ export default function TiendaEnLineaJsx() {
                       <span className="ml-1 text-sm text-gray-600">{producto.calificacion}</span>
                     </div>
                   </div>
+                  <div className="mb-2">
+                    <span className="text-sm text-gray-600">Stock: {producto.stock}</span>
+                  </div>
                   <div className="flex items-center justify-between">
+                    <Button variant="outline" size="icon" onClick={() => marcarFueraDeStock(producto.id)}>
+                      Marcar fuera de stock
+                    </Button>
+                  </div>
+                  <div className="flex items-center justify-between mt-2">
                     <Button className="w-full mr-2 bg-navy-600 hover:bg-navy-700 text-white">
                       Agregar al Carrito
                     </Button>
