@@ -20,7 +20,11 @@ export class Producto{
     @Column({type: 'date'})
     fecha_creacion: Date
 
-    constructor(){
-        
+    constructor(nombre: string, descripcion: string, precio: number, stock: number, fecha_creacion: Date){
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.stock = stock;
+        this.fecha_creacion = fecha_creacion;
     }
 }
