@@ -17,17 +17,14 @@ import { ProductoService } from './producto/producto.service';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'postgres',
+      password: '2814',
       autoLoadEntities: true,
       synchronize: true,
-      entities: [Producto, User],
     }),
-    TypeOrmModule.forFeature([User, Producto]),
     ProductoModule,
     UserModule
   ],
-  controllers: [AppController, ProductoController],
-  providers: [AppService, ProductoService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
-

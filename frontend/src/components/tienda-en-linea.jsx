@@ -1,11 +1,10 @@
-'use client'
-
 import React, { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Star, Heart, Home, Grid, User, Settings, Plus } from 'lucide-react';
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
+import { useNavigate } from 'react-router-dom';
 
 export default function TiendaEnLineaJsx() {
   const [productos, setProductos] = useState([]);
@@ -13,88 +12,62 @@ export default function TiendaEnLineaJsx() {
     nombre: '',
     precio: '',
     imagen: '',
-    calificacion: 0
+    calificacion: 0,
+    stock: 10 // Puedes cambiar esto según tus requerimientos
   });
+  const navigate = useNavigate();
 
-  const cargarProductos = async () => {
-    const productosIniciales = [
-      { id: 1, nombre: "Auriculares Inalámbricos", precio: 1199.99, calificacion: 4.5, imagen: "https://example.com/auriculares.jpg", stock: 10 },
-      { id: 2, nombre: "Reloj Inteligente", precio: 2499.99, calificacion: 4.2, imagen: "https://example.com/reloj.jpg", stock: 5 },
-    ];
-    setProductos(productosIniciales);
+  // Cargar productos desde localStorage
+  const cargarProductos = () => {
+    const productosGuardados = JSON.parse(localStorage.getItem('productos')) || [];
+    setProductos(productosGuardados);
   };
 
+  // Guardar productos en localStorage
+  const guardarProductos = (productosActualizados) => {
+    localStorage.setItem('productos', JSON.stringify(productosActualizados));
+  };
+
+  // Cargar productos cuando el componente se monta
   useEffect(() => {
     cargarProductos();
   }, []);
 
+  // Manejar cambios en el formulario
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNuevoProducto(prev => ({ ...prev, [name]: value }));
   };
 
+  // Manejar envío del formulario
   const handleSubmit = (e) => {
     e.preventDefault();
-    const nuevoProductoConId = {
+    const productoAAgregar = {
       ...nuevoProducto,
-      id: productos.length + 1,
       precio: parseFloat(nuevoProducto.precio),
-      calificacion: parseFloat(nuevoProducto.calificacion) || 0
+      calificacion: parseFloat(nuevoProducto.calificacion) || 0,
     };
-    setProductos(prev => [...prev, nuevoProductoConId]);
+
+    // Actualizar el estado y localStorage
+    const nuevosProductos = [...productos, productoAAgregar];
+    setProductos(nuevosProductos);
+    guardarProductos(nuevosProductos);
+
+    // Resetear formulario
     setNuevoProducto({ nombre: '', precio: '', imagen: '', calificacion: 0 });
   };
 
-  // función para ajustar el stock del producto 
-  const ajustarStock = async (id, cantidadVendida) => {
-    try {
-      const response = await fetch(`/api/productos/${id}/ajustar-stock`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ cantidad: cantidadVendida }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al ajustar el stock');
-      }
-      
-      const productoActualizado = await response.json();
-      setProductos((prevProductos) => 
-        prevProductos.map((producto) => 
-          producto.id === id ? productoActualizado : producto
-        )
-      );
-    } catch (error) {
-      console.error('Error ajustando el stock:', error);
-    }
-  };
-
-  // función para marcar el producto como fuera de stock
-  const marcarFueraDeStock = async (id) => {
-    try {
-      const response = await fetch(`/api/productos/${id}/fuera-de-stock`, {
-        method: 'PATCH',
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al marcar fuera de stock');
-      }
-
-      const productoActualizado = await response.json();
-      setProductos((prevProductos) =>
-        prevProductos.map((producto) =>
-          producto.id === id ? productoActualizado : producto
-        )
-      );
-    } catch (error) {
-      console.error('Error marcando fuera de stock:', error);
-    }
+  const marcarFueraDeStock = (id) => {
+    const nuevosProductos = productos.map(producto =>
+      producto.id === id ? { ...producto, stock: 0 } : producto
+    );
+    setProductos(nuevosProductos);
+    guardarProductos(nuevosProductos);
   };
 
   return (
     <div className="flex min-h-screen bg-gray-100">
       <aside className="w-64 bg-navy-900 text-white">
-        {/* Sidebar */}
         <div className="p-4">
           <h1 className="text-2xl font-bold mb-8">TiendaAzul</h1>
           <nav>
@@ -106,19 +79,38 @@ export default function TiendaEnLineaJsx() {
                 </Button>
               </li>
               <li>
-                <Button variant="ghost" className="w-full justify-start text-white hover:bg-navy-800">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-white hover:bg-navy-800"
+                  onClick={() => navigate('/gestionar-productos')}
+                >
+                  <Grid className="mr-2 h-4 w-4" />
+                  Gestionar Productos
+                </Button>
+              </li>
+              <li>
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-white hover:bg-navy-800"
+                >
                   <Grid className="mr-2 h-4 w-4" />
                   Categorías
                 </Button>
               </li>
               <li>
-                <Button variant="ghost" className="w-full justify-start text-white hover:bg-navy-800">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-white hover:bg-navy-800"
+                >
                   <User className="mr-2 h-4 w-4" />
                   Mi Cuenta
                 </Button>
               </li>
               <li>
-                <Button variant="ghost" className="w-full justify-start text-white hover:bg-navy-800">
+                <Button 
+                  variant="ghost" 
+                  className="w-full justify-start text-white hover:bg-navy-800"
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   Configuración
                 </Button>
@@ -129,7 +121,6 @@ export default function TiendaEnLineaJsx() {
       </aside>
 
       <main className="flex-1">
-        {/* Barra de búsqueda */}
         <header className="bg-white shadow-md p-4">
           <div className="flex items-center justify-between">
             <div className="relative flex-1 max-w-xl">
@@ -176,7 +167,6 @@ export default function TiendaEnLineaJsx() {
                   <div>
                     <Label htmlFor="imagen">URL de la Imagen</Label>
                     <Input
-
                       id="imagen"
                       name="imagen"
                       value={nuevoProducto.imagen}
@@ -195,12 +185,11 @@ export default function TiendaEnLineaJsx() {
           </div>
         </header>
 
-        {/* Sección de productos */}
         <div className="p-8">
           <h2 className="text-2xl font-semibold mb-6 text-navy-900">Productos Destacados</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {productos.map((producto) => (
-              <div key={producto.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+              <div key={producto.nombre} className="bg-white rounded-lg shadow-md overflow-hidden">
                 <img src={producto.imagen} alt={producto.nombre} className="w-full h-48 object-cover" />
                 <div className="p-4">
                   <h3 className="font-semibold text-lg mb-2 text-navy-900">{producto.nombre}</h3>

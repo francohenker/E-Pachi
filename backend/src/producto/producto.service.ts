@@ -1,21 +1,3 @@
-// import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Producto } from './entities/producto.entity';
-
-// @Injectable()
-// export class ProductoService {
-//     constructor(
-//         @InjectRepository(Producto)
-//         private productoRepository: Repository<Producto>,
-//     ){}
-
-//     async findAll(): Promise<Producto[]>{
-//         return await this.productoRepository.find();
-//     }
-
-// }
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -28,12 +10,18 @@ export class ProductoService {
     private productoRepository: Repository<Producto>,
   ) {}
 
-  //  obtener todos los productos
+  // Obtener todos los productos
   async findAll(): Promise<Producto[]> {
     return await this.productoRepository.find();
   }
 
-  // para ajustar el stock
+  // Agregar un nuevo producto
+  async create(productoData: Partial<Producto>): Promise<Producto> {
+    const nuevoProducto = this.productoRepository.create(productoData);
+    return this.productoRepository.save(nuevoProducto);
+  }
+
+  // Ajustar el stock
   async ajustarStock(id: number, cantidadVendida: number) {
     const producto = await this.productoRepository.findOne({ where: { id } });
 
@@ -41,7 +29,7 @@ export class ProductoService {
       producto.stock -= cantidadVendida;
 
       if (producto.stock <= producto.stockThreshold) {
-        // notifica al vendedor para reponer inventario
+        // Notifica al vendedor para reponer inventario
         this.notificarVendedor(producto);
       }
 
@@ -55,13 +43,13 @@ export class ProductoService {
     throw new NotFoundException('Producto no encontrado');
   }
 
-  // función privada para notificar al vendedor
+  // Función privada para notificar al vendedor
   private notificarVendedor(producto: Producto) {
-    // aca tiene que ir todo el codigo para notificar al vendedor via mail,notificaciones o lo que sea
+    // Aquí puedes implementar el código para notificar al vendedor via mail, notificaciones, etc.
     console.log(`Notificación: el stock del producto ${producto.nombre} está bajo.`);
   }
 
-  // función para marcar un producto como fuera de stock a mano
+  // Marcar un producto como fuera de stock a mano
   async marcarFueraDeStock(id: number) {
     const producto = await this.productoRepository.findOne({ where: { id } });
     if (producto) {
