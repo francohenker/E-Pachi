@@ -1,29 +1,8 @@
-// import { Controller, Get } from '@nestjs/common';
-// import { promises } from 'dns';
-// import { Producto } from './entities/producto.entity';
-
-// @Controller('product')
-// export class ProductoController {
-
-//     constructor(){}
-
-//     @Get()
-//     async findAll(): Promise<Producto[]>{
-//         return 
-//     }
-    
-
-
-
-
-// }
-
-
 import { Controller, Get, Patch, Param, Body, NotFoundException } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { Producto } from './producto.entity';
 
-@Controller('productos')
+@Controller('producto')
 export class ProductoController {
   constructor(
     private readonly productoService: ProductoService

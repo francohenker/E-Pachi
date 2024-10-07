@@ -19,22 +19,22 @@ export class ProductoService {
   async ajustarStock(id: number, cantidadVendida: number) {
     const producto = await this.productoRepository.findOne({ where: { id } });
 
-    if (producto) {
-      producto.stock -= cantidadVendida;
-
-      if (producto.stock <= producto.stockThreshold) {
-        // notifica al vendedor para reponer inventario
-        this.notificarVendedor(producto);
-      }
-
-      if (producto.stock <= 0) {
-        producto.disponible = false;
-      }
-
-      return this.productoRepository.save(producto);
+    if (!producto) {
+      throw new NotFoundException('Producto no encontrado');
     }
 
-    throw new NotFoundException('Producto no encontrado');
+    producto.stock -= cantidadVendida;
+
+    if (producto.stock <= producto.stockThreshold) {
+      // notifica al vendedor para reponer inventario
+      this.notificarVendedor(producto);
+    }
+
+    if (producto.stock <= 0) {
+      producto.disponible = false;
+    }
+
+    return this.productoRepository.save(producto);
   }
 
   // función privada para notificar al vendedor
